@@ -14,7 +14,7 @@ const checkAdminRole = async (userID) => {
    }catch(err){
         return false;
    }
-}
+};
 
 // POST route to add a candidate
 router.post('/', jwtAuthMiddleware, async (req, res) =>{
@@ -36,7 +36,7 @@ router.post('/', jwtAuthMiddleware, async (req, res) =>{
         console.log(err);
         res.status(500).json({error: 'Internal Server Error'});
     }
-})
+});
 
 router.put('/:candidateID', jwtAuthMiddleware, async (req, res)=>{
     try{
@@ -49,7 +49,7 @@ router.put('/:candidateID', jwtAuthMiddleware, async (req, res)=>{
         const response = await Candidate.findByIdAndUpdate(candidateID, updatedCandidateData, {
             new: true, // Return the updated document
             runValidators: true, // Run Mongoose validation
-        })
+        });
 
         if (!response) {
             return res.status(404).json({ error: 'Candidate not found' });
@@ -61,7 +61,7 @@ router.put('/:candidateID', jwtAuthMiddleware, async (req, res)=>{
         console.log(err);
         res.status(500).json({error: 'Internal Server Error'});
     }
-})
+});
 
 router.delete('/:candidateID', jwtAuthMiddleware, async (req, res)=>{
     try{
@@ -82,10 +82,10 @@ router.delete('/:candidateID', jwtAuthMiddleware, async (req, res)=>{
         console.log(err);
         res.status(500).json({error: 'Internal Server Error'});
     }
-})
+});
 
 // let's start voting
-router.get('/vote/:candidateID', jwtAuthMiddleware, async (req, res)=>{
+router.post('/vote/:candidateID', jwtAuthMiddleware, async (req, res)=>{
     // no admin can vote
     // user can only vote once
     
@@ -111,12 +111,12 @@ router.get('/vote/:candidateID', jwtAuthMiddleware, async (req, res)=>{
         }
 
         // Update the Candidate document to record the vote
-        candidate.votes.push({user: userId})
+        candidate.votes.push({user: userId});
         candidate.voteCount++;
         await candidate.save();
 
         // update the user document
-        user.isVoted = true
+        user.isVoted = true;
         await user.save();
 
         return res.status(200).json({ message: 'Vote recorded successfully' });
